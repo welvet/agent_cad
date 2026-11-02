@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "agent-cad": {
+      "command": "C:/path/to/agent_cad/.venv/Scripts/python.exe",
+      "args": ["C:/path/to/agent_cad/server.py"],
+      "env": {
+        "AGENT_CAD_WORKSPACE": "C:/CADProjects"
+      }
+    }
+  }
+}
