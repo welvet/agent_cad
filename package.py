@@ -5,12 +5,13 @@ from pathlib import Path
 import zipfile
 
 HERE = Path(__file__).resolve().parent
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 
 
 def main():
     files = sorted({*HERE.glob("*.py"), *HERE.glob("*.md"), HERE/"requirements.txt", HERE/"setup.ps1",
                     *(HERE/"examples"/f"{name}.cad.py" for name in ("cube", "loft", "arrays_pipe")),
+                    HERE/"examples/colors.py", HERE/"mcp-config.example.json",
                     *HERE.glob("tests/test_*.py"), HERE/"tests/check_mcp.py"})
     output = HERE/"dist"/f"agent-cad-{VERSION}.zip"
     output.parent.mkdir(exist_ok=True)

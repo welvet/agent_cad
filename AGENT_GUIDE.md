@@ -3,6 +3,7 @@
 **Build drafts, review with the user, export only after explicit approval.**
 The tool manages FreeCAD boilerplate, geometry checks, native saving, previews,
 and live review. Read [MODELING.md](MODELING.md) for the full modeling API.
+For OrcaSlicer 2.5 surface-color exports, read [COLORED_OBJ.md](COLORED_OBJ.md).
 
 ## Project structure
 
@@ -119,6 +120,16 @@ CAD hash, and supplied quote. The agent must obtain genuine approval: the tool
 cannot authenticate the human behind a string. Never invent/reuse approval for
 a changed design. Deliver a STEP link AND full absolute Windows path in a code
 block. Preserve exports. Generate STL only if explicitly requested.
+
+## Colored OBJ for OrcaSlicer 2.5
+
+Keep `colors.py` beside `model.cad.py`: define `PALETTE`, `color_at(x,y,z)`, and
+optional `SPLIT_PLANES`. After user approval of the current geometry and colors,
+call `export_colored_obj(project_dir, revision, approval, color_file="colors.py")`.
+It opens saved CAD without rebuilding, assigns surface materials, and writes a
+matched OBJ/MTL/ZIP plus approval receipt under the project. Native geometry,
+ordinary previews, and printer settings are unchanged. See COLORED_OBJ.md for
+exact syntax, boundary rules, import instructions, and limitations.
 
 ## Setup and recovery
 

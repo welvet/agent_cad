@@ -21,3 +21,17 @@
 Approval is a caller policy plus revision/hash checks, not independent human
 authentication. The agent must wait for real user approval and quote it honestly.
 GUI geometry edits do not round-trip back into the source script.
+
+## Colored OBJ automation (v0.3.0)
+
+- Three added tests cover palette validation, invalid material callbacks, sharp
+  color boundaries, closed mesh topology, unchanged cube area/volume, approval
+  rejection, complete OBJ/MTL/ZIP contents, and unchanged native CAD bytes.
+- Actual MCP test lists four tools and successfully exports the synthetic cube
+  with three named materials, with `rebuilt: false`.
+- The current project's separate color rules also ran through the generic mesh
+  painter without rebuilding or exporting its native CAD. Material grouping and
+  source-vs-colored edge counts were checked.
+- The 3MF/Orca painting importer is not implemented by this tool. It produces
+  OBJ+MTL surface colors for import into the user's slicer; it does not choose
+  hardware, printer profiles, material volumes, or start a print.
