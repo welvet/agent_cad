@@ -38,6 +38,38 @@ Final `root` must be one valid connected solid. Input coordinates/dimensions
 use 0.1 mm steps; root fits X/Y/Z 0..256 mm. Temporary cutters can extend beyond
 the workspace. Prefer rounded planar profiles over filleting many thin cutters.
 
+## Parts for separate color assignment
+
+When the user wants multiple colors, plan independent physical parts before
+modeling. Split at useful manufacturing boundaries (body, roof, windows, trim),
+not surface paint regions. Each part needs actual solid geometry and thickness.
+Do not merge parts that must remain separately selectable for later coloring.
+
+The current tool accepts one connected solid per build, not an assembly root.
+Use a separate subproject for each part:
+
+```text
+<project>/
+  PARTS.md                  # part names, intended colors, shared placement, fits
+  parts/body/model.cad.py
+  parts/roof/model.cad.py
+  parts/trim/model.cad.py
+```
+
+Each subproject gets its own native CAD, previews, history, revision, and STEP.
+Use a shared coordinate frame within the positive workspace so exported parts
+retain their relative placement. Avoid overlapping volumes; document any intended
+fit clearance and check mating dimensions. If a color group contains disconnected
+pieces, give each connected piece its own part subproject.
+
+Review every part and their fit with the user. Obtain approval covering the exact
+current revisions, then call export_cad separately for each approved part. Deliver
+all STEP paths and PARTS.md. The downstream application assigns colors/materials
+to the individual parts; STEP here carries geometry, not a filament assignment.
+The tool does not yet generate a combined assembly preview or assembly STEP.
+Existing single-solid projects remain valid; splitting them requires a new draft
+and review, not reusing approval from the fused model.
+
 ## Draft build: execute_cad
 
 ```json

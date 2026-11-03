@@ -10,6 +10,9 @@ close-ups, without rebuilding or exporting the geometry again.
 `export_cad(project_dir, revision, approval)` exports STEP only after explicit
 user approval of the current unchanged revision, with an approval receipt.
 
+For separately colorable designs, use independent part subprojects and approved
+STEP files per part; see [the parts workflow](AGENT_GUIDE.md#parts-for-separate-color-assignment).
+
 Read **[MODELING.md](MODELING.md)** for the model-writing API.
 
 The core tool selection follows the common solid operations in

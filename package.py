@@ -5,7 +5,7 @@ from pathlib import Path
 import zipfile
 
 HERE = Path(__file__).resolve().parent
-VERSION = "0.2.0"
+VERSION = "0.3.1"
 
 
 def main():
