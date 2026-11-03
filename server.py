@@ -10,7 +10,6 @@ from mcp.types import CallToolResult, ImageContent, TextContent
 from execute import execute_cad as build
 from inspection import inspect_cad as inspect_saved
 from exporting import export_cad as export_approved
-from colored_export import export_colored_obj as export_obj_approved
 
 
 mcp = FastMCP(
@@ -19,8 +18,7 @@ mcp = FastMCP(
     "Assign one final solid to root. Coordinates and dimensions use 0.1 mm increments; "
     "root must fit X/Y/Z 0..256 mm. Read " + str(Path(__file__).resolve().parent/"MODELING.md") + " for the helper API. "
     "Build saves a DRAFT native FCStd and four 1024px images in the project folder, and opens/refreshes FreeCAD. "
-    "NEVER export during iteration. Only call export_cad or export_colored_obj after explicit USER approval. "
-    "Colored OBJ uses project colors.py: PALETTE, color_at(x,y,z), optional SPLIT_PLANES. "
+    "NEVER export during iteration. Only call export_cad after the USER explicitly approves the current revision. "
     "Use inspect_cad to zoom into saved CAD without rebuilding. "
     "Only execute trusted local model files; Python execution is unrestricted.",
 )
@@ -94,24 +92,6 @@ async def export_cad(project_dir: str, revision: str, approval: str) -> CallTool
     """
     async with lock:
         result = await asyncio.to_thread(export_approved, project_dir, revision, approval)
-    return response(result)
-
-
-@mcp.tool()
-async def export_colored_obj(project_dir: str, revision: str, approval: str,
-                             color_file: str | None = None) -> CallToolResult:
-    """Export an approved saved draft as colored OBJ + MTL + ZIP, without rebuilding.
-
-    Default color_file is <project>/colors.py. It defines PALETTE (named #RRGGBB
-    or normalized RGB colors), color_at(x,y,z) returning a palette name, and
-    optional SPLIT_PLANES={'x':[...],'y':[...],'z':[...]} in mm for crisp bands.
-    Validates source/revision/native hash, snapshots the rules, tessellates CAD,
-    assigns surface materials, and packages matching files for OrcaSlicer 2.5.
-    Requires actual user approval of the current geometry and color scheme.
-    No STL, no CAD edits, no printer settings. See COLORED_OBJ.md for examples.
-    """
-    async with lock:
-        result = await asyncio.to_thread(export_obj_approved,project_dir,revision,approval,color_file)
     return response(result)
 
 

@@ -7,27 +7,22 @@ from execute import find_freecad_python, _run_worker
 from project import atomic_json, project_folder
 
 
-def reviewed_draft(project_dir, revision, approval):
-    project = project_folder(Path(project_dir)/"model.cad.py", project_dir)
-    manifest = json.loads((project/"project.json").read_text(encoding="utf-8"))
-    if not isinstance(approval, str) or not approval.strip():
-        raise ValueError("explicit user approval is required; quote the user's approval in approval")
-    if revision != manifest["revision"]:
-        raise ValueError("approval revision is not the current draft; review and approve the current revision")
-    cad = Path(manifest["freecad"])
-    cad_hash = hashlib.sha256(cad.read_bytes()).hexdigest()
-    if cad_hash != manifest["freecad_sha256"]:
-        raise ValueError("saved CAD changed after review; rebuild and request approval again")
-    for source in {Path(manifest["source"]), project/"model.cad.py"}:
-        digest = hashlib.sha256(source.read_text(encoding="utf-8-sig").encode()).hexdigest()
-        if digest != manifest["source_sha256"]:
-            raise ValueError("source changed since this draft; rebuild and review before exporting")
-    return project, manifest, cad, cad_hash
-
-
 def export_cad(project_dir, revision, approval, timeout=120):
     try:
-        project, manifest, cad, cad_hash = reviewed_draft(project_dir, revision, approval)
+        project = project_folder(Path(project_dir)/"model.cad.py", project_dir)
+        manifest = json.loads((project/"project.json").read_text(encoding="utf-8"))
+        if not isinstance(approval, str) or not approval.strip():
+            raise ValueError("explicit user approval is required; quote the user's approval in approval")
+        if revision != manifest["revision"]:
+            raise ValueError("approval revision is not the current draft; review and approve the current revision")
+        cad = Path(manifest["freecad"])
+        cad_hash = hashlib.sha256(cad.read_bytes()).hexdigest()
+        if cad_hash != manifest["freecad_sha256"]:
+            raise ValueError("saved CAD changed after review; rebuild and request approval again")
+        for source in {Path(manifest["source"]), project/"model.cad.py"}:
+            digest = hashlib.sha256(source.read_text(encoding="utf-8-sig").encode()).hexdigest()
+            if digest != manifest["source_sha256"]:
+                raise ValueError("source changed since this draft; rebuild and review before exporting")
         output = project/"exports"/revision
         output.mkdir(parents=True, exist_ok=True)
         if (output/"model.step").exists():

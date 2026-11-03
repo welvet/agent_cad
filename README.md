@@ -1,4 +1,4 @@
-# Agent CAD MCP
+# Agent CAD MCP — v1
 
 **Read [AGENT_GUIDE.md](AGENT_GUIDE.md) first for live review, project storage,
 and approval policy.**
@@ -9,9 +9,6 @@ CAD/previews/history in the project folder, and opens/refreshes FreeCAD. No STEP
 close-ups, without rebuilding or exporting the geometry again.
 `export_cad(project_dir, revision, approval)` exports STEP only after explicit
 user approval of the current unchanged revision, with an approval receipt.
-`export_colored_obj(project_dir, revision, approval, color_file?)` writes colored
-OBJ+MTL+ZIP for OrcaSlicer 2.5 using project `colors.py`, without rebuilding CAD.
-Read **[COLORED_OBJ.md](COLORED_OBJ.md)** for instructions and how it works.
 
 Read **[MODELING.md](MODELING.md)** for the model-writing API.
 
@@ -56,7 +53,7 @@ It waits for MCP messages on stdin; use an MCP client to call it.
 Use [mcp-config.example.json](mcp-config.example.json) as a template, or run
 `setup.ps1` to generate a config using your local installation paths.
 Other clients need the same executable and argument in their own config format.
-The server exposes these four tools. Its config is provided, not automatically
+The server exposes these three tools. Its config is provided, not automatically
 installed in any agent application's global settings.
 
 FreeCAD is discovered in standard Windows installation folders. To override:
@@ -73,8 +70,6 @@ $env:AGENT_CAD_FREECAD_PYTHON = 'C:\Program Files\FreeCAD 1.1\bin\python.exe'
 - `project.py`: project storage, immutable revisions, last-good working files.
 - `live.py` / `live_view.py`: visible FreeCAD review and camera-preserving refresh.
 - `exporting.py` / `export_worker.py`: approval-bound STEP and round-trip checks.
-- `colored_export.py` / `obj_worker.py` / `obj_colors.py`: colored OBJ materials,
-  paint-boundary tessellation, mesh statistics, and ZIP packaging.
 - `render.py`: four deterministic orthographic shaded views; no GUI or STL.
 - `inspection.py` / `inspect_worker.py`: camera and region views of saved CAD.
 - `server.py`: build/inspection tools returning concise JSON and full-size PNGs.
@@ -89,7 +84,6 @@ generate a native FreeCAD PartDesign history tree.
 ```powershell
 & 'C:\Program Files\FreeCAD 1.1\bin\python.exe' tests\test_geometry.py
 & 'C:\Program Files\FreeCAD 1.1\bin\python.exe' tests\test_render.py
-& 'C:\Program Files\FreeCAD 1.1\bin\python.exe' tests\test_obj_colors.py
 .\.venv\Scripts\python.exe -m unittest discover -s tests -p 'test_execution.py'
 .\.venv\Scripts\python.exe tests\check_mcp.py
 ```

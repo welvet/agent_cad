@@ -18,7 +18,7 @@ async def main():
         async with ClientSession(read, write) as session:
             await session.initialize()
             listing = await session.list_tools()
-            assert {tool.name for tool in listing.tools} == {"execute_cad", "inspect_cad", "export_cad", "export_colored_obj"}
+            assert {tool.name for tool in listing.tools} == {"execute_cad", "inspect_cad", "export_cad"}
             result = await session.call_tool("execute_cad", {"file_path": str(HERE/"examples"/"cube.cad.py"), "live": False})
             assert not result.isError, result
             images = [block for block in result.content if block.type == "image"]
@@ -36,15 +36,7 @@ async def main():
             close_metadata = json.loads(closeup.content[0].text)
             assert close_metadata["rebuilt"] is False
             assert len([b for b in closeup.content if b.type == "image"]) == 1
-            exported=await session.call_tool("export_colored_obj",{
-                "project_dir":metadata["project_dir"],"revision":metadata["revision"],
-                "approval":"Automated MCP test fixture approval", "color_file":str(HERE/"examples"/"colors.py"),
-            })
-            assert not exported.isError,exported
-            export_metadata=json.loads(exported.content[0].text)
-            assert export_metadata["rebuilt"] is False and len(export_metadata["material_triangles"])==3
-            print(json.dumps({"mcp": "passed", "tool_count": 4, "inline_images": len(images),
-                              "colored_obj":"passed, three materials, no rebuild",
+            print(json.dumps({"mcp": "passed", "tool_count": 3, "inline_images": len(images),
                               "inspection": "passed, one image without rebuilding",
                               "native_file": metadata["freecad"], "views": metadata["contact_sheet"],
                               "seconds": metadata["seconds"]}, indent=2))
